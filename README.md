@@ -12,10 +12,11 @@ This project implements an **MCP (Model Context Protocol) server** that provides
 ## Installation
 
 1. Clone this repository:
-   ```
-   bash git clone https://github.com/your-username/imagegallery-mcp.git cd
-   imagegallery-mcp
-   ```
+
+```
+bash git clone https://github.com/your-username/imagegallery-mcp.git cd
+imagegallery-mcp
+```
 
 Build the Docker image:
 
@@ -42,7 +43,7 @@ chroma_db/ – the ChromaDB database storing embeddings
 
 results/ – search results and metadata
 
-Claude Configuration
+3. Claude Configuration
 
 To connect this server to Claude, add an entry to your Claude MCP config file :
 
