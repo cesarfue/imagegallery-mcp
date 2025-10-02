@@ -1,4 +1,6 @@
+import logging
 import os
+import sys
 import time
 
 import chromadb
@@ -7,13 +9,15 @@ from fastmcp import FastMCP
 from PIL import Image
 from transformers import CLIPModel, CLIPProcessor
 
-BASE_OUT_DIR = "./results"
-IMAGES_FOLDER = "./gallery"
-CHROMA_DB_FOLDER = "./chroma_db"
+BASE_OUT_DIR = "/app/results"
+IMAGES_FOLDER = "/app/gallery"
+CHROMA_DB_FOLDER = "/app/chroma_db"
+
 MAX_DIM = 1024
 
 server = FastMCP("imagegallery-mcp")
-
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+log = logging.getLogger("imagegallery")
 model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
@@ -47,7 +51,6 @@ client = chromadb.PersistentClient(path=CHROMA_DB_FOLDER)
 collection = client.get_or_create_collection("images")
 
 if collection.count() == 0:
-    print("Indexing images with embeddings...")
     for filename in os.listdir(IMAGES_FOLDER):
         if filename.lower().endswith((".png", ".jpg", ".jpeg")):
             path = os.path.join(IMAGES_FOLDER, filename)
@@ -57,10 +60,10 @@ if collection.count() == 0:
                 documents=[path],
                 metadatas=[{"image_path": path}],
                 embeddings=[emb_vector],
-                ids=[path],  # use file path as unique id
+                ids=[path],
             )
 else:
-    print("Loading existing index...")
+    log.info("Loading existing index...")
 
 
 @server.tool(
