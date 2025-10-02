@@ -9,12 +9,6 @@ This project implements an **MCP (Model Context Protocol) server** that provides
 - Perform semantic search with OpenAI CLIP  
 - Support for mounting host directories into the container for persistence
 
-## Requirements
-
-- Docker (with Docker Compose if desired)  
-- Python 3.11 (inside container)  
-- Claude desktop app (or other MCP-compatible client)
-
 ## Installation
 
 1. Clone this repository:
@@ -25,7 +19,8 @@ This project implements an **MCP (Model Context Protocol) server** that provides
 
 Build the Docker image:
 
-``` docker build -t imagegallery-mcp . 
+```
+docker build -t imagegallery-mcp . 
 ```
 
 2. Usage
@@ -35,7 +30,8 @@ Run the server in a container with bind-mounted volumes to access your local fil
 ```
 docker run -it --rm \ -v $(pwd)/gallery:/app/gallery \ -v
 $(pwd)/chroma_db:/app/chroma_db \ -v $(pwd)/results:/app/results \
-imagegallery-mcp ```
+imagegallery-mcp
+```
 
 
 This makes the following directories available inside the container:
@@ -48,5 +44,26 @@ results/ – search results and metadata
 
 Claude Configuration
 
-To connect this server to Claude, add an entry to your Claude MCP config file (usually located at ~/Library/Application Support/Claude/config.json on macOS):
+To connect this server to Claude, add an entry to your Claude MCP config file :
+
+```
+{
+  "mcpServers": {
+    "imagegallery": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-v", "/absolute/path/to/gallery:/app/gallery",
+        "-v", "/absolute/path/to/chroma_db:/app/chroma_db",
+        "-v", "/absolute/path/to/results:/app/results",
+        "imagegallery-mcp"
+      ]
+    }
+  }
+}
+```
+
+Make sure to replace /absolute/path/to/... with the real paths on your machine.
 
